@@ -1,0 +1,29 @@
+{
+  "name": "todolist",
+  "version": "0.0.1",
+  "description": "A Todo LIST app connected to MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelVonWolfen/TodoList.git"
+  },
+  "keywords": [
+    "ToDo",
+    "Todo",
+    "todo",
+    "toDo",
+    "TODO"
+  ],
+  "author": "Mihai Stoica",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MichaelVonWolfen/TodoList/issues"
+  },
+  "homepage": "https://github.com/MichaelVonWolfen/TodoList#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
