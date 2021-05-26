@@ -15,7 +15,13 @@ app.set('views', views_path)
 app.use(express.static(path.join(__dirname, '../public'))) 
 hbs.registerPartials(partials_path)
 app.get('/weather', (req, res)=>{
-    geocode.geocode("Bucuresti",(error, data) =>{
+    let address;
+    if(!req.query.address)
+        return res.send({
+            error:"No address provided"
+        })
+    address = req.query.address
+    geocode.geocode(address,(error, data) =>{
         if(error)
             res.send(JSON.stringify(error))
         else 
@@ -23,7 +29,8 @@ app.get('/weather', (req, res)=>{
                 if(error)
                     res.send(JSON.stringify(error))
                 else{
-                    res.send(`<title>Hello Express</title>${JSON.stringify(data)}`)
+                    data["Address Searched"] = address
+                    res.send(JSON.stringify(data))
                 }
             })
     })
@@ -45,6 +52,14 @@ app.get('', (req, res) =>{
         title:"Weather app",
         name: "Mihai Stoica"
     })
+})
+app.get('/products', (req, res) =>{
+    if(!req.query.search){
+        return res.send({
+            error: "You must provide a search term."
+        })
+    }
+    res.send({products:[]})
 })
 app.get('*', (req, res) =>{
     res.render('404')
