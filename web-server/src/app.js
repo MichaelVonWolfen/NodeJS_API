@@ -3,11 +3,17 @@ const app = express()
 const weather = require('../../weather-app/utils/weather')
 const geocode = require('../../weather-app/utils/geocode')
 const path = require('path')
-const views_path = path.join(__dirname, '../templates')
+const hbs = require('hbs')
+
+const views_path = path.join(__dirname, '../templates/views')
+const partials_path = path.join(__dirname,'../templates/partials')
 
 app.set('view engine', 'hbs')
 app.set('views', views_path)
-app.use(express.static(path.join(__dirname, '../public')))
+
+//set-up static directory)
+app.use(express.static(path.join(__dirname, '../public'))) 
+hbs.registerPartials(partials_path)
 app.get('/weather', (req, res)=>{
     geocode.geocode("Bucuresti",(error, data) =>{
         if(error)
@@ -24,11 +30,13 @@ app.get('/weather', (req, res)=>{
 })
 app.get('/help', (req, res)=>{
     res.render('help',{
+        title:"Help page",
         name: "Mihai Stoica"
     })
 })
 app.get('/about', (req, res)=>{
     res.render('about',{
+        title:"About page",
         name:"Mihai Stoica"
     })
 })
@@ -39,7 +47,7 @@ app.get('', (req, res) =>{
     })
 })
 app.get('*', (req, res) =>{
-    res.sendStatus(404)
+    res.render('404')
 })
 app.listen(3000, () =>{
     console.log("Server is up on port 3000")
