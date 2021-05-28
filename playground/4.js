@@ -1,9 +1,11 @@
-const add = (a, b, callbkack) =>{
+const doWorkCallback = (callback) =>{
     setTimeout(()=>{
-        let sum = a + b
-        callbkack(sum)
-    },2000)
+        // return callback('This is my error!')
+        return callback(undefined, [1,2,3,4])
+    }, 2000)
 }
-add(4, 3, (sum)=>{
-    console.log(sum)
+doWorkCallback((error, result) =>{
+    if(error)
+        return console.log(error)
+    console.log(result)
 })
