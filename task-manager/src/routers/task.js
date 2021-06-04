@@ -1,74 +1,104 @@
 const express = require('express')
-require('../db/mongoose')
-const Tasks = require('../models/task')
-
-const taskRouter = express.Router()
+const Task = require('../models/task')
 const auth = require('../middleware/auth')
-const { ObjectID } = require('bson')
+const router = new express.Router()
 
-taskRouter.get('/tasks/:id',auth, async (req,res) =>{
-    let _id = req.params.id
+router.post('/tasks', auth, async (req, res) => {
+    const task = new Task({
+        ...req.body,
+        owner: req.user._id
+    })
+
     try {
-        let task = await Tasks.find({_id, owner:req.user._id})
-        if(task.length ===0){
-            return res.sendStatus(404)
-        }
-        return res.send(task)
-    } catch (e) {
-        console.log(e)
-        res.status(500).send(e)
-    }
-})
-taskRouter.get('/tasks',auth, async(req,res) =>{
-    try{
-        await req.user.populate('task').execPopulate()
-        res.send(req.user.tasks)
-    }catch(e){
-        res.sendStatus(500)
-    }
-})
-taskRouter.post('/tasks', auth, async (req, res) =>{
-    try {
-        const task = new Tasks({
-            ...req.body,
-            owner: req.user._id
-        })
-        res.send(task) 
         await task.save()
-        
-    } catch (error) {
-        res.status(400).send(error)
+        res.status(201).send(task)
+    } catch (e) {
+        res.status(400).send(e)
     }
-    
 })
-taskRouter.patch('/tasks/:id', async (req, res) =>{
-    let updates = Object.keys(req.body)
-    let allowedUpdates = ['description', 'completed']
-    let isValid = updates.every((update) => allowedUpdates.includes(update))
-    let {id} = req.params
-    if(!isValid){
-        return res.sendStatus(400)
-    }        
+
+// GET /tasks?completed=true
+//GET /tasks?limit=21&skip=0
+router.get('/tasks', auth, async (req, res) => {
+    const match = {}
+    const sort = {}
+
+    if (req.query.completed) {
+        match.completed = req.query.completed === 'true'
+    }
+    if(req.query.sortBy){
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1] === 'desc'? -1 : 1
+    }
     try {
-        let task = await Tasks.findByIdAndUpdate(id, req.body, {upsert:true, new:true, runValidators:true})
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options:{
+                limit:parseInt(req.query.limit),
+                skip:parseInt(req.query.skip) * parseInt(req.query.limit),
+                sort
+            }
+        }).execPopulate()
+        res.send(req.user.tasks)
+    } catch (e) {
+        console.error(e)
+        res.status(500).send()
+    }
+})
+
+router.get('/tasks/:id', auth, async (req, res) => {
+    const _id = req.params.id
+
+    try {
+        const task = await Task.findOne({ _id, owner: req.user._id })
+
+        if (!task) {
+            return res.status(404).send()
+        }
+
+        res.send(task)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+
+router.patch('/tasks/:id', auth, async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['description', 'completed']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' })
+    }
+
+    try {
+        const task = await Task.findOne({ _id: req.params.id, owner: req.user._id})
+
+        if (!task) {
+            return res.status(404).send()
+        }
+
+        updates.forEach((update) => task[update] = req.body[update])
+        await task.save()
         res.send(task)
     } catch (e) {
         res.status(400).send(e)
     }
 })
-taskRouter.delete('/tasks/:id',auth, async(req, res) =>{
-    let {id} = req.params
-    try{
-        let task = await Tasks.findOneAndDelete({_id:ObjectID(id), owner: req.user._id})
-        if(task==null){
-            return res.sendStatus(404)
+
+router.delete('/tasks/:id', auth, async (req, res) => {
+    try {
+        const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id })
+
+        if (!task) {
+            res.status(404).send()
         }
+
         res.send(task)
-    }catch(e){
-        console.log(e)
-        res.status(500).send(e)
+    } catch (e) {
+        res.status(500).send()
     }
-    
 })
 
-module.exports = taskRouter
+module.exports = router
