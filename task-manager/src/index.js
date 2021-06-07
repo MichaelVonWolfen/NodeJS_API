@@ -20,14 +20,14 @@ const upload = multer({
         cb(undefined, true)
     }
 })
-const ErrorMidleware = ()=>{
-    throw new Error("My middleware")
-}
-app.post('/upload',upload.single('upload'), (req, res) =>{
-    res.sendStatus(200)
-},(error, req, res, next) => {
-    res.status(400).send(error.message)
-})
+// const ErrorMidleware = ()=>{
+//     throw new Error("My middleware")
+// }
+// app.post('/upload',upload.single('upload'), (req, res) =>{
+//     res.sendStatus(200)
+// },(error, req, res, next) => {
+//     res.status(400).send(error.message)
+// })
 
 app.use(express.json())
 app.use(userRouter)

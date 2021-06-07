@@ -3,6 +3,7 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const router = new express.Router()
+const sharp = require('sharp')
 
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
@@ -91,9 +92,9 @@ const avatar = multer({
     }
 })
 router.post('/users/me/avatar',auth, avatar.single('avatar'), async (req, res)=>{
-    req.user.avatar = req.file.buffer
+    let buffer = await sharp(req.file.buffer).resize({width:250, height:250}).png().toBuffer()
+    req.user.avatar = buffer
     await req.user.save()
-    console.log(req.user.avatar)
     res.send()
 },(error, req, res, next) => {
     res.status(400).send(error.message)
@@ -109,7 +110,7 @@ router.get('/users/:id/avatar', async (req, res) =>{
         if(!user || !user.avatar){
             throw new Error('Image or user not found!')
         }
-        res.set('Content-Type','image/jpeg')
+        res.set('Content-Type','image/png')
         res.send(user.avatar)
     } catch (e) {
         console.log(e)
