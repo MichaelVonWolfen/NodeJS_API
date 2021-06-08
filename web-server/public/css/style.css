@@ -1,0 +1,30 @@
+body{
+    color:#333333;
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 100%;
+    width: 0 auto;
+    padding: 0 20% 0 20%;
+    
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+footer{
+    background-color: blueviolet;
+    color: wheat;
+}
+.main-content{
+    flex-grow: 1;
+}
+header{
+    margin-top: 100px;
+    margin-bottom: 48px;
+}
+header a{
+    color: #888;
+    margin-right: 16px;
+    text-decoration: none;
+}
+.partial{
+    width: 500px;
+}

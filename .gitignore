@@ -1,3 +1,9 @@
 node_modules
+<<<<<<< HEAD
 .idea
 dist/*
+=======
+.DS_Store
+images
+config
+>>>>>>> mihai/section15
