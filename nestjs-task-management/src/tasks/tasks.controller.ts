@@ -8,10 +8,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import console from 'console';
 import { createTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-task-filter.dto';
-import { updateTaskDto } from './dto/update-task.dto';
 import { Task, taskStatus } from './task.model';
 import { TasksService } from './tasks.service';
 
@@ -36,8 +34,8 @@ export class TasksController {
   }
 
   @Post()
-  createTask(@Body() createTaskDto: createTaskDto): Task {
-    return this.tasksService.createTask(createTaskDto);
+  createTask(@Body() createTask: createTaskDto): Task {
+    return this.tasksService.createTask(createTask);
   }
 
   @Patch('/:id/status')
