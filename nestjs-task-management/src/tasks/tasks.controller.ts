@@ -8,10 +8,6 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { createTaskDto } from './dto/create-task.dto';
-import { GetTaskFilterDto } from './dto/get-task-filter.dto';
-import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
-import { Task } from './task.model';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
