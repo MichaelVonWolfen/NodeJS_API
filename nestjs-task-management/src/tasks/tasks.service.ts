@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Users } from 'src/auth/user.entity';
 import { createTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-task-filter.dto';
 import { taskStatus } from './task-status.enum';
@@ -12,32 +13,36 @@ export class TasksService {
     private taskRepository: TasksRepository,
   ) {}
 
-  async getTaskbyID(id: string): Promise<Task> {
-    const found = await this.taskRepository.findOne(id);
+  async getTaskbyID(id: string, user: Users): Promise<Task> {
+    const found = await this.taskRepository.findOne({ where: { id, user } });
 
     if (!found) {
       throw new NotFoundException(`Task with ${id} not found.`);
     }
     return found;
   }
-  async createTask(createTaskDto: createTaskDto): Promise<Task> {
-    return this.taskRepository.createTask(createTaskDto);
+  async createTask(createTaskDto: createTaskDto, user: Users): Promise<Task> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
-  async deleteTaskById(id: string): Promise<void> {
-    const result = await this.taskRepository.delete(id);
+  async deleteTaskById(id: string, user: Users): Promise<void> {
+    const result = await this.taskRepository.delete({ id, user });
 
     if (result.affected === 0) {
       throw new NotFoundException();
     }
   }
-  async updateTaskById(id: string, status: taskStatus): Promise<Task> {
-    const task = await this.getTaskbyID(id);
+  async updateTaskById(
+    id: string,
+    status: taskStatus,
+    user: Users,
+  ): Promise<Task> {
+    const task = await this.getTaskbyID(id, user);
     task.status = status;
     await this.taskRepository.save(task);
     return task;
   }
-  async getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
-    return this.taskRepository.getTasks(filterDto);
+  async getTasks(filterDto: GetTaskFilterDto, user: Users): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto, user);
   }
 
   // private tasks: Task[] = [];
