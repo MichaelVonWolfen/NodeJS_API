@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "FirstAngularProj": {
+    "RecepyProj": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/FirstAngularProj",
+            "outputPath": "dist/RecepyProj",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -23,8 +23,8 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": []
           },
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "FirstAngularProj:build:production"
+              "browserTarget": "RecepyProj:build:production"
             },
             "development": {
-              "browserTarget": "FirstAngularProj:build:development"
+              "browserTarget": "RecepyProj:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "FirstAngularProj:build"
+            "browserTarget": "RecepyProj:build"
           }
         },
         "test": {
@@ -99,5 +99,5 @@
       }
     }
   },
-  "defaultProject": "FirstAngularProj"
+  "defaultProject": "RecepyProj"
 }
